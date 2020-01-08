@@ -5,6 +5,14 @@ library(tidyverse)
 library(readxl)
 library(fastDummies)
 library(lubridate)
+library(treemapify)
+library(wordcloud)
+library(RColorBrewer)
+library(wordcloud2)
+library(tm)
+library(magrittr)
+library(dplyr)
+
 
 #function to normalize variables
 abb_to_state <- function(a)
@@ -85,24 +93,41 @@ visa_all <- visa_all %>%
   mutate(case_received_year = year(case_received_date)) %>% 
   mutate(decision_year = year(decision_date))
 
-
-
 write.csv(visa_all,"E:\\NSS\\nss_data_science\\work_visa_us\\data\\us_work_visa.csv", row.names = FALSE)
 
-visa1 <- visa_all %>% 
-  mutate( wage = lapply(visa_all %>% select(pw_unit_of_pay_9089,visa_all$pw_amount_9089), wage_normalisation))
+usPermVisas =  read_csv("data/us_perm_visas.csv")
+
+usPermVisas$pw_amount_9089 <- as.integer(usPermVisas$pw_amount_9089)
+
+usPermVisas <- usPermVisas %>% 
+  mutate( wage = mapply(wage_normalisation, pw_unit_of_pay_9089, pw_amount_9089)) %>% 
+  select(-job_info_work_state, -pw_amount_9089, -pw_unit_of_pay_9089)
 
 
+#Create a vector containing only the text
+job <- usPermVisas$job_info_job_title
+Encoding(job)  <- "UTF-8"
 
-summary(visa_all)
-dim(visa_all)
-str(visa_all)
+#Create a corpus  
+docs <- Corpus(VectorSource(job))
 
+#clean the text
+docs <- docs %>%
+  tm_map(removeNumbers) %>% 
+  tm_map(removePunctuation) %>% 
+  tm_map(stripWhitespace)
 
+docs <- tm_map(docs, content_transformer(tolower))
+docs <- tm_map(docs, removeWords, stopwords("english"))
 
+dtm <- TermDocumentMatrix(docs) 
+matrix <- as.matrix(dtm) 
+words <- sort(rowSums(matrix),decreasing=TRUE) 
+df <- data.frame(word = names(words),freq=words)
 
-
-
-
+set.seed(1234) # for reproducibility 
+wordcloud(words = df$word, freq = df$freq, min.freq = 100,           
+          max.words=200, random.order=FALSE, rot.per=0.35,            
+          colors=brewer.pal(8, "Dark2"))
 
 
