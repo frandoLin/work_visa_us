@@ -3,7 +3,6 @@
 #import the library 
 library(tidyverse)
 library(readxl)
-library(fastDummies)
 library(lubridate)
 library(treemapify)
 library(wordcloud)
@@ -12,6 +11,10 @@ library(wordcloud2)
 library(tm)
 library(magrittr)
 library(dplyr)
+library(ggplot2)   
+library(gganimate)
+library(gifski)
+library(png)
 
 
 #function to normalize variables
@@ -93,41 +96,103 @@ visa_all <- visa_all %>%
   mutate(case_received_year = year(case_received_date)) %>% 
   mutate(decision_year = year(decision_date))
 
-write.csv(visa_all,"E:\\NSS\\nss_data_science\\work_visa_us\\data\\us_work_visa.csv", row.names = FALSE)
+visa_all$pw_amount_9089 <- as.integer(visa_all$pw_amount_9089)
 
-usPermVisas =  read_csv("data/us_perm_visas.csv")
-
-usPermVisas$pw_amount_9089 <- as.integer(usPermVisas$pw_amount_9089)
-
-usPermVisas <- usPermVisas %>% 
+visa_all <- visa_all %>% 
   mutate( wage = mapply(wage_normalisation, pw_unit_of_pay_9089, pw_amount_9089)) %>% 
   select(-job_info_work_state, -pw_amount_9089, -pw_unit_of_pay_9089)
 
+write.csv(visa_all,"E:\\NSS\\nss_data_science\\work_visa_us\\data\\us_perm_visas.csv", row.names = FALSE)
+
+usPermVisas =  read_csv("data/us_perm_visas.csv")
 
 #Create a vector containing only the text
-job <- usPermVisas$job_info_job_title
-Encoding(job)  <- "UTF-8"
+job <- usPermVisas$job_info_job_title %>% 
+  iconv(to = "utf-8") %>% 
+  paste(collapse = ", ") #convert the column to string 
 
-#Create a corpus  
-docs <- Corpus(VectorSource(job))
+stop_words <- c('senior', 'manager', 'director', 'and', 'ii', 'sr', 'and', 'business', 'lead', 'developer', 'of',
+                'v', 'worker', 'staff', 'services', 'iv','iii','technology','food','i','multiple', 'other', 'or', 
+                'commercial','rd','meat','office','group','serving','computer','development','computer','technical',
+                'it','poultry') 
 
-#clean the text
-docs <- docs %>%
-  tm_map(removeNumbers) %>% 
-  tm_map(removePunctuation) %>% 
-  tm_map(stripWhitespace)
+docs <- data_frame(text = job) %>% 
+  mutate(text = tolower(text)) %>% 
+  mutate(text = removeNumbers(text)) %>%
+  mutate(text = str_remove_all(text, '[[:punct:]]')) %>% 
+  mutate(tokens = str_split(text, "\\s+")) %>%
+  unnest() %>% 
+  count(tokens) %>% 
+  arrange(desc(n)) %>% 
+  filter(n>5000) %>% 
+  filter(!tokens %in% stop_words)
 
-docs <- tm_map(docs, content_transformer(tolower))
-docs <- tm_map(docs, removeWords, stopwords("english"))
+wordcloud2(docs, color = 'random-dark')
 
-dtm <- TermDocumentMatrix(docs) 
-matrix <- as.matrix(dtm) 
-words <- sort(rowSums(matrix),decreasing=TRUE) 
-df <- data.frame(word = names(words),freq=words)
+fillColor = "#FFA07A"
+fillColor2 = "#F1C40F"
 
-set.seed(1234) # for reproducibility 
-wordcloud(words = df$word, freq = df$freq, min.freq = 100,           
-          max.words=200, random.order=FALSE, rot.per=0.35,            
-          colors=brewer.pal(8, "Dark2"))
+usPermVisas %>% 
+  filter(state == None & case_status == 'Certified') %>% 
+  group_by(employer_name) %>%
+  summarise(CountOfEmployerName = n()) %>%
+  arrange(desc(CountOfEmployerName)) %>%
+  mutate(employer_name = reorder(employer_name, CountOfEmployerName)) %>%
+  head(20) %>% 
+  
+  ggplot(aes(x = employer_name,y = CountOfEmployerName)) +
+  geom_bar(stat='identity',colour="white", fill =fillColor) +
+  geom_text(aes(x = employer_name, y = 1, label = paste0("(",CountOfEmployerName,")",sep="")),
+            hjust=0, vjust=.5, size = 4, colour = 'black',
+            fontface = 'bold') +
+  labs(x = 'Employer Name', y = 'Count Of Visa Applications in NYC', title = 'Employers in NYC and Visas') +
+  coord_flip() + 
+  theme_bw()
 
+#the plot for the changes in the citizenship of the visa applicants over the years
+countCountry <- usPermVisas %>% 
+  filter(case_status == 'Certified') %>% 
+  drop_na(country_of_citizenship) %>% 
+  count(case_received_year, country_of_citizenship, name = "counts") %>% 
+  rename(year = `case_received_year`, nationality = `country_of_citizenship`) %>% 
+  group_by(year)%>%      
+  mutate(rank = rank(-counts),
+         Value_rel = counts/counts[rank==1],
+         Value_lbl = paste0(" ",counts)) %>%
+  group_by(nationality) %>%
+  filter(rank <= 10)
 
+anim <- ggplot(countCountry, aes(rank, group = nationality))+
+  geom_tile(aes(y = counts/2,
+                height = counts,
+                width = 0.9), alpha = 0.8, color = NA) +
+  geom_text(aes(y = 0, label = paste(nationality, " ")), vjust = 0.2, hjust = 1, size = 7) + #determine size of the Nationlity label
+  geom_text(aes(y=counts,label = Value_lbl, hjust=0),size = 8 ) +  #determine size of the value label
+  coord_flip(clip = "off", expand = TRUE) +
+  scale_x_reverse() +
+  theme_minimal() +
+  theme(axis.line=element_blank(),
+        axis.text.x=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks=element_blank(),
+        axis.title.x=element_blank(),
+        axis.title.y=element_blank(),
+        legend.position="none",
+        panel.background=element_blank(),
+        panel.border=element_blank(),
+        panel.grid.major=element_blank(),
+        panel.grid.minor=element_blank(),
+        panel.grid.major.x = element_line( size=.1, color="grey" ),
+        panel.grid.minor.x = element_line( size=.1, color="grey" ),
+        plot.title=element_text(size=25, hjust=0.5, face="bold",     colour="red", vjust=-1),
+        plot.subtitle=element_text(size=18, hjust=0.5, face="italic", color="red"),
+        plot.caption =element_text(size=12, hjust=0.5, face="italic", color="red"),
+        plot.background=element_blank(),
+        plot.margin = margin(1,4, 1, 8, "cm")) +
+  transition_states(year, transition_length = 4, state_length = 1) +
+  ease_aes('sine-in-out') +
+  labs(title = 'Number of Foreign Workers in The U.S.A per Year by Nationality: {closest_state}',  
+       caption  = "Data Source: https://www.foreignlaborcert.doleta.gov/performancedata.cfm")
+
+animate(anim, nframes = 350,fps = 25,  width = 1200, height = 1000, 
+        renderer = gifski_renderer("gganim.gif"))
