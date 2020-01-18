@@ -11,6 +11,18 @@ library(shiny)
 
 # Define server logic required to draw a histogram
 shinyServer(function(input, output) {
+    
+    output$plot1 <- renderImage({
+        
+        # Return a list containing the filename
+        list(src = "gganim.gif",
+             contentType = 'image/gif',
+        width = 1600,
+        height = 700,
+        alt = "This is alternate text") 
+        
+    },deleteFile = FALSE)
+    
     output$barPlot_1_1 <- renderPlot({
         
         usPermVisas %>% 
@@ -29,7 +41,18 @@ shinyServer(function(input, output) {
             labs(x = 'State', y = 'Count Of Visa Applications', 
                  title = 'The Top 20 States Hiring Foreign Workers') +
             coord_flip() + 
-            theme_bw()
+            theme(   
+                text = element_text(color = "#4e4d47", size = 14),
+                axis.text.y = element_text(face = "bold"),
+                axis.text.x = element_text(vjust = -0.75),
+                axis.title = element_text(size=20),
+                axis.ticks = element_blank(),
+                legend.position = "none",
+                panel.background = element_blank(),
+                panel.grid.major.y = element_line(colour = light_gray, size = 1),
+                plot.title = element_text(face = "bold", size = 20),
+                plot.subtitle = element_text(face = "italic", size = 16, margin = margin(b = 0.5, unit = "cm"))
+            )
         
     })
     
@@ -48,10 +71,21 @@ shinyServer(function(input, output) {
             geom_text(aes(x = city, y = 1, label = paste0("(",Count,")",sep="")),
                       hjust=0, vjust=.5, size = 4, colour = 'black',
                       fontface = 'bold') +
-            labs(x = 'City', y = 'Count Of Visa Applications', 
+            labs(x = 'City', y = 'Count of Visa Applications', 
                  title = 'The Top 20 Citys Hiring Foreign Workers') +
             coord_flip() + 
-            theme_bw()
+            theme(   
+                text = element_text(color = "#4e4d47", size = 14),
+                axis.text.y = element_text(face = "bold"),
+                axis.text.x = element_text(vjust = -0.75),
+                axis.title = element_text(size=20),
+                axis.ticks = element_blank(),
+                legend.position = "none",
+                panel.background = element_blank(),
+                panel.grid.major.y = element_line(colour = light_gray, size = 1),
+                plot.title = element_text(face = "bold", size = 20),
+                plot.subtitle = element_text(face = "italic", size = 16, margin = margin(b = 0.5, unit = "cm"))
+                )
         
     })
     
@@ -73,7 +107,18 @@ shinyServer(function(input, output) {
             labs(x = 'Employer Name', y = 'Count Of Visa Applications', 
                  title = 'The Top 20 Employers hiring foreign workers') +
             coord_flip() + 
-            theme_bw()
+            theme(   
+                text = element_text(color = "#4e4d47", size = 14),
+                axis.text.y = element_text(face = "bold"),
+                axis.text.x = element_text(vjust = -0.75),
+                axis.title = element_text(size=20),
+                axis.ticks = element_blank(),
+                legend.position = "none",
+                panel.background = element_blank(),
+                panel.grid.major.y = element_line(colour = light_gray, size = 1),
+                plot.title = element_text(face = "bold", size = 20),
+                plot.subtitle = element_text(face = "italic", size = 16, margin = margin(b = 0.5, unit = "cm"))
+            )
         
     })
     
@@ -91,7 +136,20 @@ shinyServer(function(input, output) {
             geom_bar(stat='identity',colour="white") +
             labs(x = 'Country', y = 'Count Of Visa Applications', title = 'Class of Visa Admission by Country') +
             coord_flip() + 
-            theme_bw()
+            theme(   
+                text = element_text(color = "#4e4d47", size = 14),
+                axis.text.y = element_text(face = "bold"),
+                axis.text.x = element_text(vjust = -0.75),
+                axis.title = element_text(size=20),
+                axis.ticks = element_blank(),
+                legend.title = element_text(size = 20),
+                legend.text = element_text(size = 16),
+                panel.background = element_blank(),
+                panel.grid.major.y = element_line(colour = light_gray, size = 1),
+                plot.title = element_text(face = "bold", size = 20),
+                plot.subtitle = element_text(face = "italic", size = 16, margin = margin(b = 0.5, unit = "cm"))
+            )
+        
     })
     
     output$cloud <- renderWordcloud2({
@@ -112,27 +170,40 @@ shinyServer(function(input, output) {
             filter(job_info_education != 'None') %>% 
             filter(case_status %in% c('Certified','Certified-Expired')) %>% 
             count(case_received_year, job_info_education, name = "degree_count") %>% 
-            ggplot( aes(x=case_received_year, y=degree_count, group=job_info_education, color=job_info_education)) +
+            ggplot(aes(x=case_received_year, y=degree_count, group=job_info_education, color=job_info_education)) +
             geom_line() +
             geom_point() +
             scale_color_hue('job_info_education') +
             ggtitle("The Change in The Education of Applicants over the years") +
             theme_ipsum() +
-            xlab("year") +
-            ylab("Number of babies born")
+            xlab("Year") +
+            ylab("Count") +
+            theme(   
+                legend.text = element_text(size = 14)
+            )
     })
     
     output$histplot <- renderPlot({
         
         breaks = seq(0,300000,40000)
-        
         usPermVisas %>%
             filter(case_status == 'Certified' ) %>%
             ggplot(aes(wage)) +
             scale_x_continuous(limits = c(0, 300000),breaks=breaks ) +
             geom_histogram(binwidth = 10000,,fill = c("red")) +
             labs(x = 'Dollor', y = 'Count', 
-                 title = 'Distribution of The Wage for The Applicants') +  theme_bw()
+                 title = 'Distribution of The Wage for The Applicants',
+                 subtitle = "The salary for most foreign workers were around from 60K to 12k") +  
+            theme(
+                text = element_text(color = "#4e4d47", size = 14),
+                axis.text.y = element_text(face = "bold"),
+                axis.text.x = element_text(vjust = -0.75),
+                axis.title = element_text(size=20),
+                axis.ticks = element_blank(),
+                legend.position = "none",
+                panel.grid.major.y = element_line(colour = light_gray, size = 1),
+                plot.title = element_text(face = "bold", size = 20),
+            ) 
         
     })
     
@@ -143,84 +214,42 @@ shinyServer(function(input, output) {
                        fill = difference > 0))+
             geom_bar(stat = "identity")+
             coord_flip()+
-            labs(x = "Job Title", y = "Wage Change",
+            labs(x = "Job Title", y = "Wage_Change_Percentage",
                  title = "The chage in Salaries",
                  subtitles = "mean of the applicants - mean of the Glassdoor")+
-            theme_minimal()+
+            theme(   
+                text = element_text(color = "#4e4d47", size = 14),
+                axis.text.y = element_text(face = "bold"),
+                axis.text.x = element_text(vjust = -0.75),
+                axis.title = element_text(size=20),
+                axis.ticks = element_blank(),
+                legend.position = "none",
+                legend.title = element_text(size = 20),
+                legend.text = element_text(size = 16),
+                panel.background = element_blank(),
+                panel.grid.major.y = element_line(colour = light_gray, size = 1),
+                plot.title = element_text(face = "bold", size = 20),
+                plot.subtitle = element_text(face = "italic", size = 16, margin = margin(b = 0.5, unit = "cm"))
+            )+
             guides(fill = FALSE)
         
     })
     
     output$dumbbell_1 <- renderPlot({
         
-        ggplot(obama_trump_count, aes(x=o_count, xend=t_count, y=state)) + 
-            #create a thick line between x and xend instead of using defaut 
-            #provided by geom_dubbell
-            geom_segment(aes(x=o_count, 
-                             xend=t_count, 
-                             y=state, 
-                             yend=state), 
-                         color="#b2b2b2", size=1.5)+
-            geom_dumbbell(color="light blue", 
-                          size_x=3.5, 
-                          size_xend = 3.5,
-                          #Note: there is no US:'color' for UK:'colour' 
-                          # in geom_dumbbel unlike standard geoms in ggplot()
-                          colour_x="black", 
-                          colour_xend = "red")+
-            labs(x= 'Year', y= 'State',
-                 title="Count Comparison by State", 
-                 subtitle="Obama vs Trump")+
-            geom_text(color="black", size=2, hjust=-0.5,
-                      aes(x=o_count, label=o_count))+
-            geom_text(aes(x=t_count, label=t_count), 
-                      color="black", size=2, hjust=1.5)
+        dumbbell_count
         
     })
     
     output$dumbbell_2 <- renderPlot({
         
-        ggplot(o_t_wage, aes(x=o_wage_mean, xend=t_wage_mean, y=state)) + 
-            geom_segment(aes(x=o_wage_mean, 
-                             xend=t_wage_mean, 
-                             y=state, 
-                             yend=state), 
-                         color="#b2b2b2", size=1.5)+
-            geom_dumbbell(color="light blue", 
-                          size_x=3.5, 
-                          size_xend = 3.5,
-                          colour_x="black", 
-                          colour_xend = "red")+
-            labs(x= 'Year', y= 'State',
-                 title="Wage Comparison by State", 
-                 subtitle="Obama vs Trump")+
-            geom_text(color="black", size=2, hjust=-0.5,
-                      aes(x=o_wage_mean, label=t_wage_mean))+
-            geom_text(aes(x=o_wage_mean, label=t_wage_mean), 
-                      color="black", size=2, hjust=1.5)
+        dumbbell_wage
         
     })
     
     output$dumbbell_3 <- renderPlot({
         
-        ggplot(o_t_time, aes(x=o_time_mean, xend=t_time_mean, y=state)) + 
-            geom_segment(aes(x=o_time_mean, 
-                             xend=t_time_mean, 
-                             y=state, 
-                             yend=state), 
-                         color="#b2b2b2", size=1.5)+
-            geom_dumbbell(color="light blue", 
-                          size_x=3.5, 
-                          size_xend = 3.5,
-                          colour_x="black", 
-                          colour_xend = "red")+
-            labs(x= 'Year', y= 'State',
-                 title="Processing Time Comparison by State", 
-                 subtitle="Obama vs Trump")+
-            geom_text(color="black", size=2, hjust=-0.5,
-                      aes(x=o_time_mean, label=t_time_mean))+
-            geom_text(aes(x=o_time_mean, label=t_time_mean), 
-                      color="black", size=2, hjust=1.5)
+        dumbbell_time
         
     })
     

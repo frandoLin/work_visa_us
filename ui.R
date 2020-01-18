@@ -12,10 +12,9 @@ library(shiny)
 # Define UI for application that draws a histogram
 shinyUI(
     dashboardPage(
-        skin = 'red',
-        dashboardHeader(title = 'Foreign Workers'),
+        dashboardHeader(title = 'Foreign Workers in the U.S.'),
         dashboardSidebar(
-            div(a(href = "https://www.foreignlaborcert.doleta.gov/performancedata.cfm", img(src="WWW/tn.png", width = 140, height=70))),
+            div(a(href = "https://www.foreignlaborcert.doleta.gov/performancedata.cfm", tags$img(src='WWW/tn.png', width = 50, height=50))),
             sidebarMenu(
                 menuItem("About", tabName = "about", icon = icon("info-circle")),
                 menuItem("Trends", tabName = "trends", icon = icon("globe")),
@@ -29,18 +28,20 @@ shinyUI(
         ),
         dashboardBody(
             tabItems(
-                tabItem("about",
-                    mainPanel(
-                        fluidRow(
-                            align = "center",
-                            "How to center this?"
-                        )
-                    ),
-                    mainPanel(
-                        fluidRow(
-                            div(a(img(src="WWW/p.jpg")))
-                        )
-                    )
+                tabItem('about',
+                        title = 'Data', status = 'primary', solidHeader = TRUE, width=3,
+                        h2('Context'),
+                        h4('A Program Electronic Review Management (PERM) Labor Certification issued by 
+                        the Department of Labor (DOL) allows an employer to hire a foreign worker to 
+                        work permanently in the United States. In most instances, the employer must 
+                        obtain a certified labor from the DOL before submiting an immigration petition 
+                        for the worker.'),
+                        h2('Overview'),
+                        h4('The U.S. has been the largest coutry for immigrants, with the steady growth 
+                           of the foreign workers over the years. The purpose of this project is to
+                           explore the worker demographics and their salary levels, and find out the 
+                           key factors determining their approval of the visas'),
+                       imageOutput('plot1')
                 ),
                 tabItem("trends",
                     fluidRow(
@@ -103,7 +104,11 @@ shinyUI(
                                                 plotOutput("histplot", width = 1600, height = 500)
                                             )      
                                    ),
-                                   tabPanel("coming soon...", 
+                                   tabPanel("Wage Comparison", 
+                                            fluidRow(
+                                                # A static valueBox
+                                                valueBox("-7.57%", "Overall decrease", icon = icon("credit-card"))
+                                            ),
                                             fluidRow(
                                                 plotOutput("bi_barplot", width = 1600, height = 500)
                                             )      
@@ -112,17 +117,30 @@ shinyUI(
                         )
                     )
                 ),
-                tabItem("counts", 
+                tabItem("counts",
+                    fluidRow(
+                        # A static valueBox
+                        valueBox("67.78%", "Overall increase", icon = icon("credit-card"))
+                    ),
                     fluidRow(
                         plotOutput("dumbbell_1", width = 1650, height = 850)
                     )
                 ), 
-                tabItem("wage",  
+                tabItem("wage",
+                    fluidRow(
+                        # A static valueBox
+                        valueBox("5.11%", "Overall increase", icon = icon("list"), color = "purple")
+                    ),
                     fluidRow(
                         plotOutput("dumbbell_2", width = 1650, height = 850)
                     )
                 ),
                 tabItem("processing_time", 
+                    fluidRow(
+                        # A static valueBox
+                        valueBox("-3.8%", "Overall increase", icon = icon("thumbs-up", lib = "glyphicon"),
+                                 color = "yellow")
+                    ),
                     fluidRow(
                         plotOutput("dumbbell_3", width = 1650, height = 850)
                     ) 
