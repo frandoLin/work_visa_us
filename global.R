@@ -142,7 +142,7 @@ dumbbell_count <- ggplot(data = obama_trump_count,
             mapping = aes(x = 43000, y = state,
                           label = ifelse(count_group == "o_count","",
                                          ifelse(change == 0,paste0(as.character(change)),
-                                                ifelse(change > 0, paste0("+",as.character(change)), paste0(as.character(change))))))) +
+                                                ifelse(change > 0, paste0("+",as.character(change),"%"), paste0(as.character(change),"%")))))) +
   # Insert Title of Differences
   geom_text(fontface = "bold", size = 4, colour = "gray", nudge_y = 0.6,
             mapping = aes(x = 43000, y = state,label = ifelse(state == "NORTHERN MARIANA ISLANDS", "DIFF",""))) +
@@ -215,7 +215,7 @@ dumbbell_wage <- ggplot(data = o_t_wage,
             mapping = aes(x = 137500, y = state,
                           label = ifelse(wage_group == "o_wage_mean","",
                                          ifelse(change == 0,paste0(as.character(change)),
-                                                ifelse(change > 0, paste0("+",as.character(change)), paste0(as.character(change))))))) +
+                                                ifelse(change > 0, paste0("+",as.character(change),"%"), paste0(as.character(change),"%")))))) +
   # Insert Title of Differences
   geom_text(fontface = "bold", size = 4, colour = "gray", nudge_y = 0.6,
             mapping = aes(x = 137500, y = state,label = ifelse(state == "SOUTH CAROLINA", "DIFF",""))) +
@@ -224,7 +224,7 @@ dumbbell_wage <- ggplot(data = o_t_wage,
        subtitle = paste0(
          "Overall, under the Trump administration, the minimum wage for the \n",
          "application approval was higher than that under the Obama"),
-       x = "State", y = "Dollar") +
+       x = "Dollar", y = "State") +
   theme(
     text = element_text(color = "#4e4d47", size = 14),
     axis.text.y = element_text(face = "bold"),
@@ -281,7 +281,7 @@ dumbbell_time <- ggplot(
             mapping = aes(x = 510, y = state,
                           label = ifelse(time_group == "o_time_mean","",
                                          ifelse(change == 0,paste0(as.character(change)),
-                                                ifelse(change > 0, paste0("+",as.character(change)), paste0(as.character(change))))))) +
+                                                ifelse(change > 0, paste0("+",as.character(change),"%"), paste0(as.character(change),"%")))))) +
   # Insert Title of Differences
   geom_text(fontface = "bold", size = 4, colour = "gray", nudge_y = 0.6,
             mapping = aes(x = 510, y = state,label = ifelse(state == "DELAWARE", "DIFF",""))) +
@@ -290,7 +290,7 @@ dumbbell_time <- ggplot(
        subtitle = paste0(
          "Under the Trump administration, the processing time for the \n",
          "application approval was shorter than that under the Obama"),
-       x = "State", y = "Day") +
+       x = "Day", y = "State") +
   theme(
     text = element_text(color = "#4e4d47", size = 14),
     axis.text.y = element_text(face = "bold"),

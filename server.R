@@ -36,7 +36,7 @@ shinyServer(function(input, output) {
             ggplot(aes(x = state,y = Count)) +
             geom_bar(stat='identity',colour="white", fill =fillColor) +
             geom_text(aes(x = state, y = 1, label = paste0("(",Count,")",sep="")),
-                      hjust=0, vjust=.5, size = 4, colour = 'black',
+                      hjust=0, vjust=.5, size = 6, colour = 'black',
                       fontface = 'bold') +
             labs(x = 'State', y = 'Count Of Visa Applications', 
                  title = 'The Top 20 States Hiring Foreign Workers') +
@@ -69,7 +69,7 @@ shinyServer(function(input, output) {
             ggplot(aes(x = city, y = Count)) +
             geom_bar(stat='identity',colour="white", fill =fillColor2) +
             geom_text(aes(x = city, y = 1, label = paste0("(",Count,")",sep="")),
-                      hjust=0, vjust=.5, size = 4, colour = 'black',
+                      hjust=0, vjust=.5, size = 6, colour = 'black',
                       fontface = 'bold') +
             labs(x = 'City', y = 'Count of Visa Applications', 
                  title = 'The Top 20 Citys Hiring Foreign Workers') +
@@ -102,7 +102,7 @@ shinyServer(function(input, output) {
             ggplot(aes(x = employer_name,y = CountOfEmployerName)) +
             geom_bar(stat='identity',colour="white", fill =fillColor) +
             geom_text(aes(x = employer_name, y = 1, label = paste0("(",CountOfEmployerName,")",sep="")),
-                      hjust=0, vjust=.5, size = 4, colour = 'black',
+                      hjust=0, vjust=.5, size = 6, colour = 'black',
                       fontface = 'bold') +
             labs(x = 'Employer Name', y = 'Count Of Visa Applications', 
                  title = 'The Top 20 Employers hiring foreign workers') +
@@ -134,7 +134,13 @@ shinyServer(function(input, output) {
             
             ggplot(aes(x = country_of_citizenship,y = CountOfCountry, fill = class_of_admission)) +
             geom_bar(stat='identity',colour="white") +
-            labs(x = 'Country', y = 'Count Of Visa Applications', title = 'Class of Visa Admission by Country') +
+            labs(x = 'Country', y = 'Count Of Visa Applications', title = 'Class of Visa Admission by Country',
+                 subtitles = paste0(
+                     "The E-2 Investor Visa allows an individual to enter and work inside of the United States  \n",
+                     "The F-1 visa allows students study in the U.S. \n",
+                     "The H1-B is the most common visa for skilled workders to stay temporarily \n",
+                     "The L-1 is a short-period work visa\n",
+                     "The TN is a kind of special work visa only for the citizens in Mexico and Canada")) +
             coord_flip() + 
             theme(   
                 text = element_text(color = "#4e4d47", size = 14),
@@ -147,7 +153,7 @@ shinyServer(function(input, output) {
                 panel.background = element_blank(),
                 panel.grid.major.y = element_line(colour = light_gray, size = 1),
                 plot.title = element_text(face = "bold", size = 20),
-                plot.subtitle = element_text(face = "italic", size = 16, margin = margin(b = 0.5, unit = "cm"))
+                plot.subtitle = element_text(face = "italic", size = 12, margin = margin(b = 0.5, unit = "cm"))
             )
         
     })
@@ -215,8 +221,10 @@ shinyServer(function(input, output) {
             geom_bar(stat = "identity")+
             coord_flip()+
             labs(x = "Job Title", y = "Wage_Change_Percentage",
-                 title = "The chage in Salaries",
-                 subtitles = "mean of the applicants - mean of the Glassdoor")+
+                 title = "Compared to The Mean Salary in Glassdoor by The Job Positions",
+                 subtitles = paste0(
+                     "For most positions, the foreign workers were slightly paid more than the mean salary in glassdoor\n",
+                     "In the sophisticated field, they were well less paid. \n"))+
             theme(   
                 text = element_text(color = "#4e4d47", size = 14),
                 axis.text.y = element_text(face = "bold"),
@@ -229,7 +237,7 @@ shinyServer(function(input, output) {
                 panel.background = element_blank(),
                 panel.grid.major.y = element_line(colour = light_gray, size = 1),
                 plot.title = element_text(face = "bold", size = 20),
-                plot.subtitle = element_text(face = "italic", size = 16, margin = margin(b = 0.5, unit = "cm"))
+                plot.subtitle = element_text(face = "italic", size = 14, margin = margin(b = 0.5, unit = "cm"))
             )+
             guides(fill = FALSE)
         

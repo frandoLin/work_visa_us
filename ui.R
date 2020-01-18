@@ -105,6 +105,8 @@ shinyUI(
                                             )      
                                    ),
                                    tabPanel("Wage Comparison", 
+                                            "The figure might not accurate because of sample selection. Also, the job titles vary
+                                             from company to company and it is hard to standardize them.",
                                             fluidRow(
                                                 # A static valueBox
                                                 valueBox("-7.57%", "Overall decrease", icon = icon("credit-card"))
@@ -138,7 +140,7 @@ shinyUI(
                 tabItem("processing_time", 
                     fluidRow(
                         # A static valueBox
-                        valueBox("-3.8%", "Overall increase", icon = icon("thumbs-up", lib = "glyphicon"),
+                        valueBox("-3.8%", "Overall decrease", icon = icon("thumbs-up", lib = "glyphicon"),
                                  color = "yellow")
                     ),
                     fluidRow(
