@@ -12,10 +12,14 @@ library(shiny)
 # Define UI for application that draws a histogram
 shinyUI(
     dashboardPage(
-        dashboardHeader(title = 'Foreign Workers in the U.S.'),
+        dashboardHeader(title = 'Foreign Workers'),
         dashboardSidebar(
-            div(a(href = "https://www.foreignlaborcert.doleta.gov/performancedata.cfm", tags$img(src='WWW/tn.png', width = 50, height=50))),
             sidebarMenu(
+                actionLink(inputId='ab1', label="Xin Lin", 
+                           icon = icon("github"), 
+                           onclick ="window.open('https://github.com/frandoLin/work_visa_us', '_blank')"),
+                br(),
+                br(),
                 menuItem("About", tabName = "about", icon = icon("info-circle")),
                 menuItem("Trends", tabName = "trends", icon = icon("globe")),
                 menuItem("Widgets", icon = icon("th"), tabName = "widgets"),
@@ -23,7 +27,12 @@ shinyUI(
                          menuSubItem("Counts of Applicants", tabName = "counts"),
                          menuSubItem("Wage", tabName = "wage"),
                          menuSubItem("Processing Time", tabName = "processing_time")
-                )
+                        ),
+                menuItem(" Certification", icon = icon("cc-visa"),
+                         menuSubItem("Type of degree", tabName = "degree"),
+                         menuSubItem("Type of visa", tabName = "visa")
+                         ),
+                menuItem("Data Source", tabName = "data", icon = icon("database"))
             )
         ),
         dashboardBody(
@@ -45,15 +54,15 @@ shinyUI(
                 ),
                 tabItem("trends",
                     fluidRow(
-                        tabBox(width = 1650, height = 900,
+                        tabBox(width = 1200, height = 900,
                             tabPanel("By State", 
                                  fluidRow(
-                                     plotOutput("barPlot_1_1", width = 1600, height = 750)
+                                     plotOutput("barPlot_1_1", width = 1200, height = 650)
                                  )      
                             ),
                             tabPanel("By City", 
                                  fluidRow(
-                                     plotOutput("barPlot_1_2", width = 1600, height = 750)
+                                     plotOutput("barPlot_1_2", width = 1200, height = 650)
                                  )      
                             ),
                             tabPanel("By company", 
@@ -62,12 +71,12 @@ shinyUI(
                                                  selected = 'ALL')
                                  ),
                                  fluidRow(
-                                     plotOutput("barPlot_1_3", width = 1600, height = 750)
+                                     plotOutput("barPlot_1_3", width = 1200, height = 650)
                                  )  
                             ),
                             tabPanel("By Type", 
                                  fluidRow(
-                                     plotOutput("barPlot_1_4", width = 1600, height = 750)
+                                     plotOutput("barPlot_1_4", width = 1200, height = 650)
                                  )      
                             )
                         )
@@ -94,14 +103,14 @@ shinyUI(
                     fluidRow(
                         conditionalPanel(
                             condition = "input.word == 'education'",
-                            plotOutput("lineplot", width = 1650, height = 500)
+                            plotOutput("lineplot", width = 1300, height = 500)
                         ),
                         conditionalPanel(
                             condition = "input.word == 'job'",
-                            tabBox(width = 1650, height = 900,
+                            tabBox(width = 1200, height = 900,
                                    tabPanel("Distribution", 
                                             fluidRow(
-                                                plotOutput("histplot", width = 1600, height = 500)
+                                                plotOutput("histplot", width = 1200, height = 500)
                                             )      
                                    ),
                                    tabPanel("Wage Comparison", 
@@ -112,7 +121,7 @@ shinyUI(
                                                 valueBox("-7.57%", "Overall decrease", icon = icon("credit-card"))
                                             ),
                                             fluidRow(
-                                                plotOutput("bi_barplot", width = 1600, height = 500)
+                                                plotOutput("bi_barplot", width = 1200, height = 500)
                                             )      
                                    )
                             )
@@ -125,7 +134,7 @@ shinyUI(
                         valueBox("67.78%", "Overall increase", icon = icon("credit-card"))
                     ),
                     fluidRow(
-                        plotOutput("dumbbell_1", width = 1650, height = 850)
+                        plotOutput("dumbbell_1", width = 1250, height = 650)
                     )
                 ), 
                 tabItem("wage",
@@ -134,7 +143,7 @@ shinyUI(
                         valueBox("5.11%", "Overall increase", icon = icon("list"), color = "purple")
                     ),
                     fluidRow(
-                        plotOutput("dumbbell_2", width = 1650, height = 850)
+                        plotOutput("dumbbell_2", width = 1200, height = 650)
                     )
                 ),
                 tabItem("processing_time", 
@@ -144,8 +153,23 @@ shinyUI(
                                  color = "yellow")
                     ),
                     fluidRow(
-                        plotOutput("dumbbell_3", width = 1650, height = 850)
+                        plotOutput("dumbbell_3", width = 1200, height = 650)
                     ) 
+                ),
+                tabItem("degree",
+                        fluidRow(
+                            sankeyNetworkOutput("sankey_1", width = 1200, height = 650)
+                        )
+                ), 
+                tabItem("visa",
+                        fluidRow(
+                            sankeyNetworkOutput("sankey_2", width = 1200, height = 650)
+                        )
+                ),
+                tabItem('data',
+                        h2('Data Source'),
+                        tags$a(href="https://www.foreignlaborcert.doleta.gov/performancedata.cfm", 
+                               h3("UNITED STATES DEPARTMENT OF LABOR Employment & Training Administration"))
                 )
             )
         )

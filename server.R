@@ -199,7 +199,7 @@ shinyServer(function(input, output) {
             geom_histogram(binwidth = 10000,,fill = c("red")) +
             labs(x = 'Dollor', y = 'Count', 
                  title = 'Distribution of The Wage for The Applicants',
-                 subtitle = "The salary for most foreign workers were around from 60K to 12k") +  
+                 subtitle = "The salary for most foreign workers were around from 60K to 120k") +  
             theme(
                 text = element_text(color = "#4e4d47", size = 14),
                 axis.text.y = element_text(face = "bold"),
@@ -258,6 +258,24 @@ shinyServer(function(input, output) {
     output$dumbbell_3 <- renderPlot({
         
         dumbbell_time
+        
+    })
+    
+    output$sankey_1 <- renderSankeyNetwork({
+        
+        sankeyNetwork(Links = degree_sankey, Nodes = nodes_1,
+                      Source = "IDsource", Target = "IDtarget",
+                      Value = "value", NodeID = "name", 
+                      sinksRight=FALSE, colourScale=ColourScal, nodeWidth=40, fontSize=13, nodePadding=20)
+        
+    })
+    
+    output$sankey_2 <- renderSankeyNetwork({
+        
+        sankeyNetwork(Links = class_sankey, Nodes = nodes_2,
+                      Source = "IDsource", Target = "IDtarget",
+                      Value = "value", NodeID = "name", 
+                      sinksRight=FALSE, colourScale=ColourScal, nodeWidth=40, fontSize=13, nodePadding=20)
         
     })
     
