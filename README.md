@@ -27,3 +27,8 @@ The U.S. has been the largest coutry for immigrants, with the steady growth of t
 	* The comparison of the processing time for applicants being ceritfied 
 
 * What is the key factors determined the approval of PERM Labor Certification? 
+#### Data source:
+* UNITED STATES DEPARTMENT OF LABOR Employment & Training Administration (892175 X 155) 
+Data covers 2006-2019 fiscal year and includes information on employer, position, wage offered, job posting history, employee 
+education and past visa history, associated lawyers, and final decision(Certified or Rejected).
+* Some figures for specific jobs are from The Glassdoor (e.g. the mean of salary for database engineer) 
