@@ -1,8 +1,4 @@
-### An exploratory data analysis of the foreign workers in the U.S. in recent years
-
-
-<img src='images/gganim.gif'>
-
+### #An exploratory data analysis of the foreign workers in the U.S. in recent years
 
 #### This project is deployed as a Shiny dashboard at: https://xin-lin.shinyapps.io/foreign-worker/
 #### Context:
@@ -12,7 +8,7 @@ before submiting an immigration petition for the worker.
 
 #### Overview:
 The U.S. has been the largest coutry for immigrants, with the steady growth of the foreign workers over the years. The purpose of this project is to explore the worker demographics and their salary levels, and find out the key factors determining their approval of the visas.
-
+<img src='images/gganim.gif'>
 #### Data questions:
 * The trends of foreign worker recruitment in the U.S.
   * Which state hires the most foreign workers
